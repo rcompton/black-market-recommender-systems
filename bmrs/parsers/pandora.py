@@ -6,6 +6,7 @@ import re
 import pandas as pd
 import dateutil
 import os
+import traceback
 
 
 DATA_DIR='/home/aahu/Desktop/pandora/'
@@ -25,7 +26,10 @@ def html_to_df(fname, fdate, category):
         cs = li.find(href=re.compile("listing/cat/."))
         if cs is not None:
             cats[cs['href'].split('/')[-1]] = cs.text.strip()
-    catname = cats[category]
+    try:
+        catname = cats[category]
+    except KeyError:
+        catname=category
 
     tbls = soup.find_all('tr')
     l = []
@@ -56,8 +60,12 @@ def html_to_df(fname, fdate, category):
 
 def catdir_to_df(catdir, cat, fdate):
     if not os.path.isdir(catdir):
-        print('not dir!', catdir)
-        return
+        print('not dir!, trying to parse the file... ', catdir)
+        try:
+            return html_to_df(catdir,category=cat, fdate=fdate)
+        except:
+            traceback.print_tb()
+            return
     fs = os.listdir(catdir)
     fs = map(lambda x: os.path.join(catdir,x),fs)
     l = [html_to_df(f,category=cat, fdate=fdate) for f in fs]
