@@ -9,3 +9,6 @@ aahu@barahv2 ~/Desktop> du -hs sheep/
 
 aahu@barahv2 ~/Desktop> du -hs hydra/
 8.4G	hydra/
+
+aahu@barahv2 /m/a/b/dknet> du -sh agora/
+119G	agora/
