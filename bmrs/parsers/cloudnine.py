@@ -61,7 +61,14 @@ def html_to_dict(fname, fdate):
 
     vtag = soup.find(text=re.compile('.*Public PGP key of.*'))
     if str(vtag) == vtag:
-        d['vendor'] = vtag.split()[-1].strip()
+        if len(vtag.parent()) > 0:
+            d['vendor'] = vtag.parent()[0].text.strip()
+        else:
+            try:
+                d['vendor'] = str(vtag).split('\n')[1].strip()
+                logger.debug(d['vendor'])
+            except IndexError:
+                logger.exception(vtag)
     else:
         try:
             vendor = vtag.parent.find('a').text
@@ -69,7 +76,7 @@ def html_to_dict(fname, fdate):
         except AttributeError:
             logger.warning(vtag)
 
-    d['scraped_date'] = fdate
+    d['scrape_date'] = fdate
     return d
 
 
