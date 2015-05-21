@@ -36,20 +36,23 @@ def html_to_df(fname, fdate):
     profs = soup.find_all(href=re.compile('http://k5zq47j6wd3wdvjq.onion/profile/.*'))
     l = []
     for p in profs:
-        if p.text != 'simurgh': # Welcome back simurgh!
-            d = {}
-            d['vendor'] = p.text.strip()
-            d['listing'] = p.fetchPrevious()[1].text.strip()
-            d['category'] = soup.title.text.strip().split('::')[1].strip()
-            # try:
-            #     fn = p.fetchNext()
-            #     if len(fn) >= 2:
-            #         d['cats_ships'] = p.fetchNext()[1].text.strip()
-            #         d['price_btc'] = p.fetchNext()[2].text.strip()
-            # except:
-            #     logger.exception(p)
-            d['scrape_date'] = fdate
-            l.append(d)
+        try:
+            if p.text != 'simurgh': # Welcome back simurgh!
+                d = {}
+                d['vendor'] = p.text.strip()
+                d['listing'] = p.fetchPrevious()[1].text.strip()
+                d['category'] = soup.title.text.strip().split('::')[1].strip()
+                # try:
+                #     fn = p.fetchNext()
+                #     if len(fn) >= 2:
+                #         d['cats_ships'] = p.fetchNext()[1].text.strip()
+                #         d['price_btc'] = p.fetchNext()[2].text.strip()
+                # except:
+                #     logger.exception(p)
+                d['scrape_date'] = fdate
+                l.append(d)
+        except:
+            logger.exception(p)
     return pd.DataFrame(l)
 
 
