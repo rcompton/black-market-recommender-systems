@@ -66,7 +66,8 @@ def main():
     print('fractional support required: {}'.format(min_support))
 
     df = run_spmf_freq_itemsets(dtabse,min_support)
-    print(df[df['itemset'].map(lambda x:len(x)==2)])
+    df = df[df['itemset'].map(lambda x:len(x)==2)]
+    df.to_csv('musicians.tsv', sep='\t', index=False)
 
 
 

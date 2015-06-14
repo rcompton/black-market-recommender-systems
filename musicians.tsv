@@ -1,0 +1,86 @@
+itemset	support
+['Muse', 'Placebo']	98
+['Nirvana', 'The Beatles']	90
+['Nirvana', 'Muse']	85
+['Pink Floyd', 'The Beatles']	76
+['Paramore', 'Muse']	75
+['Nirvana', 'Radiohead']	74
+['Lady Gaga', 'Muse']	73
+['Placebo', 'Radiohead']	72
+['Muse', 'Red Hot Chili Peppers']	72
+['The Killers', 'The Beatles']	70
+['Pink Floyd', 'Radiohead']	70
+['Pink Floyd', 'Muse']	68
+['The Smiths', 'Radiohead']	68
+['Kings of Leon', 'Coldplay']	67
+['Lady Gaga', 'Rihanna']	67
+['Muse', 'Kings of Leon']	67
+['Paramore', 'Lady Gaga']	66
+['Oasis', 'The Beatles']	65
+['Muse', 'Franz Ferdinand']	65
+['Oasis', 'Muse']	64
+['Red Hot Chili Peppers', 'Coldplay']	64
+['Green Day', 'Muse']	63
+['The Beatles', 'Led Zeppelin']	63
+['Nirvana', 'Red Hot Chili Peppers']	62
+['Lady Gaga', 'Britney Spears']	62
+['Queen', 'The Beatles']	61
+['The Rolling Stones', 'The Beatles']	61
+['Oasis', 'Radiohead']	61
+['Radiohead', 'The Cure']	61
+['Arctic Monkeys', 'Oasis']	61
+['Muse', 'System of a Down']	61
+['Lady Gaga', 'The Beatles']	61
+['Muse', 'Metallica']	60
+['The Strokes', 'The Beatles']	60
+['Oasis', 'Coldplay']	59
+['Nirvana', 'Coldplay']	59
+['The Strokes', 'Radiohead']	59
+['Pink Floyd', 'Led Zeppelin']	58
+['David Bowie', 'Radiohead']	58
+['Oasis', 'The Killers']	57
+['MGMT', 'Muse']	57
+['Muse', 'Foo Fighters']	57
+['Arctic Monkeys', 'Kings of Leon']	57
+['Radiohead', 'Death Cab for Cutie']	57
+['Franz Ferdinand', 'Radiohead']	57
+['The Beatles', 'Red Hot Chili Peppers']	57
+['The Beatles', 'Death Cab for Cutie']	56
+['Placebo', 'Coldplay']	56
+['Arctic Monkeys', 'MGMT']	56
+['Muse', '30 Seconds to Mars']	55
+['Lady Gaga', 'Coldplay']	55
+['The Smiths', 'The Cure']	54
+['The Smiths', 'The Beatles']	54
+['Linkin Park', 'Muse']	54
+['Arctic Monkeys', 'Nirvana']	54
+['Iron Maiden', 'Metallica']	54
+['Muse', 'Death Cab for Cutie']	54
+['Kings of Leon', 'Radiohead']	54
+['Arctic Monkeys', 'Franz Ferdinand']	54
+['The Beatles', 'David Bowie']	54
+['Metallica', 'System of a Down']	53
+['Ke$ha', 'Lady Gaga']	53
+['Arctic Monkeys', 'The Kooks']	53
+['Muse', 'The Kooks']	53
+['Muse', 'The Cure']	53
+['Oasis', 'Nirvana']	53
+['The Strokes', 'The Killers']	53
+['Red Hot Chili Peppers', 'Foo Fighters']	53
+['Kings of Leon', 'The Killers']	52
+['Nirvana', 'Foo Fighters']	52
+['Queen', 'Muse']	52
+['The Beatles', 'Franz Ferdinand']	52
+['Red Hot Chili Peppers', 'Radiohead']	52
+['Pearl Jam', 'Radiohead']	51
+['MGMT', 'The Beatles']	51
+['Snow Patrol', 'Muse']	51
+['Lady Gaga', 'Lily Allen']	51
+['Nirvana', 'Placebo']	51
+['The Killers', 'Placebo']	51
+['Pearl Jam', 'Nirvana']	51
+['The Killers', 'Red Hot Chili Peppers']	51
+['Muse', 'Kasabian']	50
+['Muse', 'Incubus']	50
+['Foo Fighters', 'Radiohead']	50
+['Arctic Monkeys', 'Placebo']	50
