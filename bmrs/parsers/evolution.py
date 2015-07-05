@@ -40,7 +40,7 @@ def listing_html_to_dict(fname, fdate):
     logger.info('UnicodeDecodeError... meh {}'.format(fname))
     return
   if soup.title.text.strip() == 'Evolution   :: Home':
-    logger.info('Home listing...')
+    logger.info('Home listing... {}'.format(fname))
     return
 
   d['scrape_date'] = fdate
@@ -127,7 +127,7 @@ def main():
     dfs = executor.map(tuple_eater, inp)
 
   # write
-  df = pd.concate(dfs)
+  df = pd.concat(dfs)
   outname = 'listing_df_' + datestr + '.tsv'
   df.to_csv(os.path.join(RESULT_DIR, outname), '\t', index=False)
 
