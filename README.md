@@ -13,9 +13,12 @@ aahu@barahv2 ~/Desktop> du -hs hydra/
 aahu@barahv2 /m/a/b/dknet> du -sh agora/
 119G	agora/
 
+TODO:
++ scrape price data from evolution
+
 Contributions
-- collab filter builds categories
-- geographic spread of items
-- price over time?
-- lexicon?
-- entity resoultion
++ collab filter builds categories
++ geographic spread of items
++ price over time?
++ lexicon?
++ entity resoultion
