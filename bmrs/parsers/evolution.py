@@ -21,67 +21,71 @@ logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 
 
-DATA_DIR = os.path.join(os.getenv('HOME'),'Desktop/evolution/')
+DATA_DIR = os.path.join(os.getenv('HOME'), 'Desktop/evolution/')
 RESULT_DIR = 'data/evolution/'
 if not os.path.exists(RESULT_DIR):
   os.mkdir(RESULT_DIR)
 
+
 def listing_html_to_dict(fname, fdate):
-    """
-    parse an evolution listing html file
-    must spec date file was scraped
-    """
-    logger.debug(fname)
-    d = {}
-    try:
-        soup = BeautifulSoup(open(fname, encoding='utf-8', errors='ignore'))
-    except UnicodeDecodeError:
-        logger.info('UnicodeDecodeError... meh {}'.format(fname))
-        return
-    if soup.title.text.strip() == 'Evolution   :: Home':
-        logger.info('Home listing...')
-        return
+  """
+  parse an evolution listing html file
+  must spec date file was scraped
+  """
+  logger.debug(fname)
+  d = {}
+  try:
+    soup = BeautifulSoup(open(fname, encoding='utf-8', errors='ignore'))
+  except UnicodeDecodeError:
+    logger.info('UnicodeDecodeError... meh {}'.format(fname))
+    return
+  if soup.title.text.strip() == 'Evolution   :: Home':
+    logger.info('Home listing...')
+    return
 
-    col8 = soup.find('div',class_="col-md-8 page-product")
-    vendor = col8.find(href=re.compile('http://k5zq47j6wd3wdvjq.onion/profile/.*'))
-    d['vendor'] = vendor.text.strip()
+  d['scrape_date'] = fdate
 
-    bcs = soup.find('ol',{'class','breadcrumb'})
-    if not bcs:
-        logger.warning('no breadcrumb in {}'.format(fname))
-        return
-    cat = [li.text for li in bcs.find_all('li')]
-    listing = cat[-1]
-    cat = cat[:-1]
-    d['listing'] = listing.strip()
-    d['cat_tuple'] = tuple(map(lambda x: x.strip(),cat))
-    d['category'] = d['cat_tuple'][-1]
+  col8 = soup.find('div', class_="col-md-8 page-product")
+  vendor = col8.find(href=re.compile('http://k5zq47j6wd3wdvjq.onion/profile/.*'))
+  d['vendor'] = vendor.text.strip()
 
-    md7 = soup.find('div',class_='col-md-7')
-    if md7 is None:
-        logger.warning('no md7')
-        print(soup.prettify())
-        return
-    price = md7.find('strong')
-    if price:
-        d['price'] = price.text.strip()
-    ship = md7.find('dl', class_="dl-horizontal")
-    if ship:
-      for dt in ship.find_all('dt'):
-        if dt.text.lower() == 'ships from':
-            d['ships_from'] = dt.find_next_sibling('dd').text.strip()
+  bcs = soup.find('ol', {'class', 'breadcrumb'})
+  if not bcs:
+    logger.warning('no breadcrumb in {}'.format(fname))
+    return
+  cat = [li.text for li in bcs.find_all('li')]
+  listing = cat[-1]
+  cat = cat[:-1]
+  d['listing'] = listing.strip()
+  d['cat_tuple'] = tuple(map(lambda x: x.strip(), cat))
+  d['category'] = d['cat_tuple'][-1]
 
-    alldivs = soup.find_all('div', class_='container')
-    bigdiv = [x for x in alldivs if x.parent == soup.body]
-    if len(bigdiv) > 0:
-        #d['big_text'] = bigdiv[0]
-        for h4 in bigdiv[0].find_all('h4'):
-            if h4.text.strip() == 'Description':
-                d['big_text'] = h4.find_next_sibling('p').text.strip()
-            if h4.text.strip() == 'Ships To':
-                d['ships_to'] = h4.find_next_sibling('p').text.strip()
-    #logger.info(d)
-    return d
+  md7 = soup.find('div', class_='col-md-7')
+  if md7 is None:
+    logger.warning('no md7')
+    print(soup.prettify())
+    return
+  price = md7.find('strong')
+  if price:
+    d['price'] = price.text.strip()
+  ship = md7.find('dl', class_="dl-horizontal")
+  if ship:
+    for dt in ship.find_all('dt'):
+      if dt.text.lower() == 'ships from':
+        d['ships_from'] = dt.find_next_sibling('dd').text.strip()
+
+  alldivs = soup.find_all('div', class_='container')
+  bigdiv = [x for x in alldivs if x.parent == soup.body]
+  if len(bigdiv) > 0:
+      #d['big_text'] = bigdiv[0]
+    for h4 in bigdiv[0].find_all('h4'):
+      if h4.text.strip() == 'Description':
+        d['description'] = h4.find_next_sibling('p').text.strip()
+      if h4.text.strip() == 'Ships To':
+        d['ships_to'] = h4.find_next_sibling('p').text.strip()
+  # logger.info(d)
+  return d
+
 
 def cat_html_to_df(fname, fdate):
   """
@@ -99,7 +103,7 @@ def cat_html_to_df(fname, fdate):
     return
   logger.info('num lists in {0}: {1}'.format(fname, len(lists)))
 
-  #first one should be ok..
+  # first one should be ok..
   items = lists[0].find_all('li')
   logger.info('num items in {0}: {1}'.format(fname, len(items)))
   l = []
@@ -117,10 +121,9 @@ def cat_html_to_df(fname, fdate):
     dic['price'] = price.text.strip()
     dic['category'] = soup.title.text.strip().split('::')[1].strip()
 
-
-     #
+    #
     #  dtag = item.find('div', {'class', 'item_details'})
-     #
+    #
     #  vtag = item.find('div', {'class', 'vendor'})
     #  vendor = None
     #  if vtag:
@@ -130,7 +133,7 @@ def cat_html_to_df(fname, fdate):
     #    if dtag:
     #      if dtag.find('a'):
     #        vendor = dtag.find('a').text
-     #
+    #
     #  ships_from = None
     #  ships_to = None
     #  stag = item.find('div', {'class', 'shipping'})
@@ -143,7 +146,7 @@ def cat_html_to_df(fname, fdate):
     #      ships_to = ships_to.replace('ships to:', '').strip()
     #    except:
     #      logger.info(stag)
-     #
+    #
     #  else:
     #    if dtag:
     #      try:
@@ -154,7 +157,7 @@ def cat_html_to_df(fname, fdate):
     #        ships_to = ships_to.replace('ships to:', '').strip()
     #      except:
     #        logger.info(dtag)
-     #
+    #
     #  d = {}
     #  d['listing'] = listing
     #  d['price_btc'] = price
@@ -204,24 +207,27 @@ def catdir_to_df(catdir, fdate):
   l = [html_to_df(f, fdate) for f in fs]
   return pd.concat(l).reindex()
 
+
 def listdir_to_df(listdir, fdate):
   logger.info('processing: {}'.format(listdir))
   fs = os.listdir(listdir)
   fs = map(lambda x: os.path.join(listdir, x), fs)
   l = []
   for f in fs:
-      if os.path.isfile(f):
-          #try:
-        l.append(listing_html_to_dict(f, fdate))
-          #except:
-              #logger.exception(f)
+    if os.path.isfile(f):
+        # try:
+      l.append(listing_html_to_dict(f, fdate))
+      # except:
+      # logger.exception(f)
   dfout = pd.DataFrame(l)
   logger.info('shape dfout: {}'.format(dfout.shape))
   print(dfout.head(3))
   return dfout
 
+
 def tuple_eater(tup):  # for concurrent
-    return listdir_to_df(tup[0],tup[1])
+  return listdir_to_df(tup[0], tup[1])
+
 
 def get_dirs_and_dates():
   l = []
@@ -234,18 +240,17 @@ def get_dirs_and_dates():
   return l
 
 
-
 def main():
-    inp = get_dirs_and_dates()
+  inp = get_dirs_and_dates()
 
-    #concurrent!
-    with concurrent.futures.ProcessPoolExecutor(max_workers=5) as executor:
-        dfs = executor.map(tuple_eater, inp)
+  # concurrent!
+  with concurrent.futures.ProcessPoolExecutor(max_workers=6) as executor:
+    dfs = executor.map(tuple_eater, inp)
 
-    #write
-    df = pd.concate(dfs)
-    outname = 'listing_df_' + datestr + '.tsv'
-    df.to_csv(os.path.join(RESULT_DIR, outname), '\t', index=False)
+  # write
+  df = pd.concate(dfs)
+  outname = 'listing_df_' + datestr + '.tsv'
+  df.to_csv(os.path.join(RESULT_DIR, outname), '\t', index=False)
 
 
 if __name__ == '__main__':
