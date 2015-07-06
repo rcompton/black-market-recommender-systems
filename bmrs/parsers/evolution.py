@@ -124,7 +124,7 @@ def get_dirs_and_dates():
 
 
 def main():
-  inp = get_dirs_and_dates()[:3]
+  inp = get_dirs_and_dates()
 
   # concurrent!
   with concurrent.futures.ProcessPoolExecutor(max_workers=4) as executor:
@@ -137,6 +137,7 @@ def main():
 
   # write
   df = pd.concat([df for df in dfs if df is not None])
+  df = df.drop_duplicates()
   outname = 'evolution.tsv'
   df.to_csv(os.path.join(RESULT_DIR, outname), '\t', index=False)
 
