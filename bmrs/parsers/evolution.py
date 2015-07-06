@@ -80,7 +80,7 @@ def listing_html_to_dict(fname, fdate):
       #d['big_text'] = bigdiv[0]
     for h4 in bigdiv[0].find_all('h4'):
       if h4.text.strip() == 'Description':
-        d['description'] = h4.find_next_sibling('p').text.strip()
+        d['description'] = h4.find_next_sibling('p').text.strip().replace('\n', ' ')
       if h4.text.strip() == 'Ships To':
         d['ships_to'] = h4.find_next_sibling('p').text.strip()
   # logger.info(d)
@@ -94,15 +94,19 @@ def listdir_to_df(listdir, fdate):
   l = []
   for f in fs:
     if os.path.isfile(f):
-        # try:
-      l.append(listing_html_to_dict(f, fdate))
+      d = listing_html_to_dict(f, fdate)
+      if d is not None:
+          l.append(d)
       # except:
       # logger.exception(f)
-  dfout = pd.DataFrame(l)
-  logger.info('shape dfout: {}'.format(dfout.shape))
-  print(dfout.head(3))
-  return dfout
-
+  if len(l) > 0:
+      dfout = pd.DataFrame(l)
+      logger.info('shape dfout: {}'.format(dfout.shape))
+      print(dfout.head(3))
+      return dfout
+  else:
+      logger.warn('nothing in {}'.format(listdir))
+      return None
 
 def tuple_eater(tup):  # for concurrent
   return listdir_to_df(tup[0], tup[1])
@@ -120,15 +124,20 @@ def get_dirs_and_dates():
 
 
 def main():
-  inp = get_dirs_and_dates()
+  inp = get_dirs_and_dates()[:3]
 
   # concurrent!
-  with concurrent.futures.ProcessPoolExecutor(max_workers=6) as executor:
-    dfs = executor.map(tuple_eater, inp)
+  with concurrent.futures.ProcessPoolExecutor(max_workers=4) as executor:
+     dfs = executor.map(tuple_eater, inp)
+  dfs = list(dfs)
+  dfs = [df for df in dfs if df is not None]
+  #dfs = []
+  #for dd in inp:
+      #dfs.append(tuple_eater(dd))
 
   # write
-  df = pd.concat(dfs)
-  outname = 'listing_df_' + datestr + '.tsv'
+  df = pd.concat([df for df in dfs if df is not None])
+  outname = 'evolution.tsv'
   df.to_csv(os.path.join(RESULT_DIR, outname), '\t', index=False)
 
 
