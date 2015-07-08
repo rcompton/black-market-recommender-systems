@@ -7,6 +7,7 @@ import pandas as pd
 import dateutil
 import os
 import traceback
+import itertools
 
 import concurrent.futures
 
@@ -46,8 +47,13 @@ def listing_html_to_dict(fname, fdate):
   d['scrape_date'] = fdate
 
   col8 = soup.find('div', class_="col-md-8 page-product")
-  vendor = col8.find(href=re.compile('http://k5zq47j6wd3wdvjq.onion/profile/.*'))
-  d['vendor'] = vendor.text.strip()
+  if col8 is not None:
+      vendor = col8.find(href=re.compile('http://k5zq47j6wd3wdvjq.onion/profile/.*'))
+      d['vendor'] = vendor.text.strip()
+  else:
+      vendor = soup.find(href=re.compile('http://k5zq47j6wd3wdvjq.onion/profile/.*'))
+      if vendor is not None:
+          d['vendor'] = vendor.text.strip() + '__is_gwern??'
 
   bcs = soup.find('ol', {'class', 'breadcrumb'})
   if not bcs:
@@ -83,7 +89,7 @@ def listing_html_to_dict(fname, fdate):
         d['description'] = h4.find_next_sibling('p').text.strip().replace('\n', ' ')
       if h4.text.strip() == 'Ships To':
         d['ships_to'] = h4.find_next_sibling('p').text.strip()
-  # logger.info(d)
+  #logger.info(d)
   return d
 
 
@@ -94,15 +100,16 @@ def listdir_to_df(listdir, fdate):
   l = []
   for f in fs:
     if os.path.isfile(f):
-      d = listing_html_to_dict(f, fdate)
-      if d is not None:
-          l.append(d)
-      # except:
-      # logger.exception(f)
+        try:
+            d = listing_html_to_dict(f, fdate)
+            if d is not None:
+                l.append(d)
+        except:
+            logger.exception("except")
   if len(l) > 0:
       dfout = pd.DataFrame(l)
+      print(dfout.head(10))
       logger.info('shape dfout: {}'.format(dfout.shape))
-      print(dfout.head(3))
       return dfout
   else:
       logger.warn('nothing in {}'.format(listdir))
@@ -110,7 +117,6 @@ def listdir_to_df(listdir, fdate):
 
 def tuple_eater(tup):  # for concurrent
   return listdir_to_df(tup[0], tup[1])
-
 
 def get_dirs_and_dates():
   l = []
@@ -128,18 +134,29 @@ def main():
 
   # concurrent!
   with concurrent.futures.ProcessPoolExecutor(max_workers=4) as executor:
-     dfs = executor.map(tuple_eater, inp)
-  dfs = list(dfs)
-  dfs = [df for df in dfs if df is not None]
+     ds = executor.map(tuple_eater, inp)
+
+  ds = itertools.chain.from_iterable(ds)
+  ds = list(ds)
+  ds = [df for df in ds if df is not None]
+  ds = [df for df in ds if len(df) > 0]
+
+  for idx, df in enumerate(ds):
+    try:
+        outname = 'evolution_{}.tsv'.format(idx)
+        df.to_csv(os.path.join(RESULT_DIR, outname), '\t', index=False)
+    except:
+        logger.exception('df?????{}'.format(type(df)))
+
   #dfs = []
   #for dd in inp:
       #dfs.append(tuple_eater(dd))
 
   # write
-  df = pd.concat([df for df in dfs if df is not None])
+  #df = pd.DataFrame(ds)
+  df = pd.concat(ds)
   df = df.drop_duplicates()
   outname = 'evolution.tsv'
-  df.to_csv(os.path.join(RESULT_DIR, outname), '\t', index=False)
 
 
 if __name__ == '__main__':

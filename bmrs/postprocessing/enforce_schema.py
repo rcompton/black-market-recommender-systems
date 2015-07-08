@@ -120,35 +120,38 @@ def build_table():
   dbname = 'sqlite+pysqlite:////home/aahu/Dropbox/black-market-recommender-systems/data/bmrs.db'
   conn = sqlalchemy.create_engine(dbname, module=sqlite3.dbapi2)
 
-  btp = load_bitstamp()
-
-  # do cloudnine first it has the perfect schema
-  df = load_cloudnine()
-  logger.info(df.columns)
-  merge_bitstamp(df, btp)
-  df.to_sql('bmrs', conn, index=False, if_exists='replace')
-
-  df = load_pandora()
-  logger.info(df.columns)
-  merge_bitstamp(df, btp)
-  df.to_sql('bmrs', conn, index=False, if_exists='append')
-
-  df = load_agora()
-  logger.info(df.columns)
-  merge_bitstamp(df, btp)
-  df.to_sql('bmrs', conn, index=False, if_exists='append')
-
-  df = load_hydra()
-  logger.info(df.columns)
-  merge_bitstamp(df, btp)
-  print(df.dtypes)
-  df.to_sql('bmrs', conn, index=False, if_exists='append')
-
-  df = load_silkroad2()
-  logger.info(df.columns)
-  merge_bitstamp(df, btp)
-  df.to_sql('bmrs', conn, index=False, if_exists='append')
-  return
+  df = load_evolution()
+  print(df)
+  #
+  # btp = load_bitstamp()
+  #
+  # # do cloudnine first it has the perfect schema
+  # df = load_cloudnine()
+  # logger.info(df.columns)
+  # merge_bitstamp(df, btp)
+  # df.to_sql('bmrs', conn, index=False, if_exists='replace')
+  #
+  # df = load_pandora()
+  # logger.info(df.columns)
+  # merge_bitstamp(df, btp)
+  # df.to_sql('bmrs', conn, index=False, if_exists='append')
+  #
+  # df = load_agora()
+  # logger.info(df.columns)
+  # merge_bitstamp(df, btp)
+  # df.to_sql('bmrs', conn, index=False, if_exists='append')
+  #
+  # df = load_hydra()
+  # logger.info(df.columns)
+  # merge_bitstamp(df, btp)
+  # print(df.dtypes)
+  # df.to_sql('bmrs', conn, index=False, if_exists='append')
+  #
+  # df = load_silkroad2()
+  # logger.info(df.columns)
+  # merge_bitstamp(df, btp)
+  # df.to_sql('bmrs', conn, index=False, if_exists='append')
+  # return
 
 
 def dedup_table():
@@ -180,8 +183,9 @@ def dedup_table():
 
 
 def main():
+
   build_table()
-  dedup_table()
+  #dedup_table()
   pass
 
 if __name__ == '__main__':
